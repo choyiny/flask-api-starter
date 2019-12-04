@@ -1,0 +1,19 @@
+# core packages
+flask==1.0.2
+flask-restful==0.3.7
+flask_cors
+
+# database
+psycopg2-binary==2.7.6
+Flask-SQLAlchemy===2.2
+sqlalchemy==1.2.7
+alembic
+
+# sending external requests
+requests==2.21.0
+
+# deployment
+gunicorn==20.0.4
+
+# Error tracking
+sentry-sdk[flask]

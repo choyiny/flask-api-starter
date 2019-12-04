@@ -1,0 +1,13 @@
+"""Settings configuration - Configuration for environment variables can go in here."""
+import os
+
+# API
+SECRET_KEY = "replace_this"
+
+# SQLAlchemy
+SQLALCHEMY_ECHO = False  # do not show SQL statements
+SQLALCHEMY_TRACK_MODIFICATIONS = False  # suppress warnings
+SQLALCHEMY_DATABASE_URI = "postgresql://postgres@localhost/example"
+
+# CORS
+FRONTEND_URL = "http://localhost:4200"

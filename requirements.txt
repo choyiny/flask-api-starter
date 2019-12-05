@@ -5,8 +5,8 @@ flask_cors
 
 # database
 psycopg2-binary==2.7.6
+SQLAlchemy>=1.3.0
 Flask-SQLAlchemy===2.2
-sqlalchemy==1.2.7
 alembic
 
 # sending external requests

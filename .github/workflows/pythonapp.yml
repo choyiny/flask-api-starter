@@ -1,6 +1,6 @@
 name: PEP8 Compliance
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:

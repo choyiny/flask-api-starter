@@ -1,5 +1,5 @@
 # Boilerplate for Flask APIs
-A skeleton Flask API application to quickstart development.
+A skeleton Flask API only application to quickstart development.
 
 ## Features
 - Uses Flask Blueprints for module separation

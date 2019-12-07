@@ -1,5 +1,4 @@
 """Settings configuration - Configuration for environment variables can go in here."""
-import os
 
 # API
 SECRET_KEY = "replace_this"

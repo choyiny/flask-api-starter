@@ -14,7 +14,7 @@ logger = logging.getLogger('flask.general')
 db = SQLAlchemy()
 BaseModel = declarative_base()
 try:
-    from example.models import *
+    from example.models import User
     METADATA = BaseModel.metadata
 except ImportError:
     pass

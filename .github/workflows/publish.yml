@@ -21,7 +21,7 @@ jobs:
         IMAGE_NAME: 'flask-api-starter'
         TAG: 'latest'
         DOCKERFILE_PATH: 'Dockerfile'
-        BUILD_CONTEXT: '/'
+        BUILD_CONTEXT: '.'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -10,3 +10,5 @@ SQLALCHEMY_DATABASE_URI = "postgresql://postgres@localhost/example"
 
 # CORS
 FRONTEND_URL = "http://localhost:4200"
+
+SENTRY_DSN = ""

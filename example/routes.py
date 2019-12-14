@@ -1,6 +1,6 @@
 from flask_restful import Api
 
-from example.controllers import ExampleIndexController, UsersCollectionController, UsersController
+from example.controllers import ExampleIndexController, UsersCollectionController, UsersController, PraiseController
 
 
 def set_routes(api: Api):
@@ -9,3 +9,5 @@ def set_routes(api: Api):
 
     api.add_resource(UsersCollectionController, '/users/')
     api.add_resource(UsersController, '/users/<string:user_id>')
+
+    api.add_resource(PraiseController, '/praise')

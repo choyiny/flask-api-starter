@@ -2,6 +2,7 @@
 
 # API
 SECRET_KEY = "replace_this"
+ORIGINS = ['*']
 
 # SQLAlchemy
 SQLALCHEMY_ECHO = False  # do not show SQL statements

@@ -2,19 +2,19 @@
 A skeleton Flask API only application to quickstart development.
 
 ## Features
-- Uses Flask Blueprints for module separation
+- Uses [Flask Blueprints](https://flask.palletsprojects.com/en/1.1.x/blueprints/) for module separation
 - Support for PostgreSQL connection
-- Database migrations with Alembic
+- Database migrations with [Alembic](https://alembic.sqlalchemy.org/en/latest/)
 - Fully dockerized and deployment ready
-- ORM-ready with SQLAlchemy
-- Support for Redis Queues
+- ORM-ready with [SQLAlchemy](https://www.sqlalchemy.org/)
 - Various (optional) helper classes with common useful functionality
-- CORS protected
-- Integrates with Flask-Restful
-- Sentry Integration
+- [CORS](https://flask-cors.readthedocs.io/en/latest/) protected
+- Integrates with [Flask-RESTful](https://flask-restful.readthedocs.io/en/latest/) and [Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
+- [Sentry](https://sentry.io/) Integration
 
 ## Deployment
 `Dockerfile` is ready for deployment.
+It is recommended to reverse proxy through nginx.
 
 ## Development
 ### Setup
@@ -72,7 +72,6 @@ Alembic is used to manage database migrations. Existing migrations are version c
 ### Setting up Blueprints
 Flask blueprints are like modules. To create a new one, you can copy the example blueprint, and modify the `__init__.py`
 to change the prefix url. Ensure that it is also included in `app.py`.
-
     
 ## Managing Utilities
 Resetting database

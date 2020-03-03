@@ -1,0 +1,51 @@
+version: '3.7'
+services:
+  starter-proxy:
+    container_name: starter-proxy
+    image: jwilder/nginx-proxy:alpine
+    volumes:
+      - certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - DEFAULT_HOST=demo.choy.in
+  letsencrypt:
+    container_name: starter-proxy-letsencrypt
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NGINX_PROXY_CONTAINER=starter-proxy
+  starter-backend:
+    build: .
+    volumes:
+      - ./config/config.py:/usr/src/app/config.py
+    expose:
+      - 5000
+    environment:
+      - VIRTUAL_HOST=demo.choy.in
+      - LETSENCRYPT_HOST=demo.choy.in
+      - LETSENCRYPT_EMAIL=i@choy.in
+    depends_on:
+      - starter-postgres
+  starter-postgres:
+    image: postgres:12
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=starter
+      - POSTGRES_DB=starter
+      - POSTGRES_PORT=5432
+volumes:
+  certs:
+  html:
+  postgres:

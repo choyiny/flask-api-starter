@@ -1,11 +1,9 @@
 from marshmallow_sqlalchemy import ModelSchema
 
-
-from base.base_model import BaseDBModel
 from extensions import db
 
 
-class User(BaseDBModel):
+class User(db.Model):
     __tablename__ = 'users'
 
     # id

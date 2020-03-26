@@ -61,12 +61,12 @@ Alembic is used to manage database migrations. Existing migrations are version c
 1. Ensure models are imported in `flask-api-starter/extensions.py`.
 2. Generate the migrations
     ```
-    (flask-starter-venv) $ PYTHONPATH=. alembic revision --autogenerate -m "optional description"
+    (flask-starter-venv) $ flask db migrate -m "migration message."
     ```
-
-3. Migrate the database.
+3. Edit the migrations if necessary.
+4. Migrate the database.
     ```
-    (flask-starter-venv) $ PYTHONPATH=. alembic upgrade head
+    (flask-starter-venv) $ flask db upgrade
     ```
 
 ### Setting up Blueprints

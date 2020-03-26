@@ -1,6 +1,7 @@
 import os
 
 import sentry_sdk
+from flask_migrate import Migrate
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 from flask import Flask
@@ -53,9 +54,7 @@ def register_extensions(app: Flask):
         return
 
     db.init_app(app)
-
-    with app.app_context():
-        db.create_all()
+    migrate = Migrate(app, db)
 
 
 def register_blueprints(app: Flask):

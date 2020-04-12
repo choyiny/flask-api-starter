@@ -11,6 +11,8 @@ A skeleton Flask API only application to quickstart development.
 - [CORS](https://flask-cors.readthedocs.io/en/latest/) protected
 - Integrates with [Flask-RESTful](https://flask-restful.readthedocs.io/en/latest/) and [Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
 - [Sentry](https://sentry.io/) Integration
+- Documentation generated with [Flask-APISpec](https://github.com/jmcarp/flask-apispec/)
+- [Celery](http://www.celeryproject.org/) worker queue support.
 
 ## Deployment
 `Dockerfile` is ready for deployment.
@@ -54,7 +56,11 @@ Remember to fill any necessary fields in `config.py`.
     ```
     (flask-starter-venv) $ flask run
     ```
-
+3. Start Celery worker
+    ```
+    (flask-starter-venv) $ celery worker -A worker.celery --loglevel=info
+    ```
+    
 ### Database Setup
 Alembic is used to manage database migrations. Existing migrations are version controlled so to generate migrations after making changes to any models,
  

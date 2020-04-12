@@ -1,12 +1,15 @@
 import os
 
 import sentry_sdk
+from flask_apispec import FlaskApiSpec
 from flask_migrate import Migrate
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
+from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 import config as c
 
@@ -14,11 +17,12 @@ from example import example_bp
 from example import routes as example_routes
 
 from extensions import db, logger
+from spec import APISPEC_SPEC
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def create_app():
+def create_app(for_celery=False):
     """ Application Factory. """
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -30,7 +34,7 @@ def create_app():
     register_extensions(app)
     register_blueprints(app)
     register_shell(app)
-    register_external()
+    register_external(skip_sentry=for_celery)
 
     return app
 
@@ -59,18 +63,25 @@ def register_extensions(app: Flask):
 
 def register_blueprints(app: Flask):
     """ Register Flask blueprints. """
+    app.config.update({
+        'APISPEC_SPEC': APISPEC_SPEC
+    })
+    docs = FlaskApiSpec(app)
+
     # example blueprint
     example_api = Api(example_bp)
-    example_routes.set_routes(example_api)
     app.register_blueprint(example_bp)
+    example_routes.set_routes(example_api, docs)
     # add more blueprints below
 
 
-def register_external():
+def register_external(skip_sentry=False):
     """ Register external integrations. """
     # sentry
     if len(c.SENTRY_DSN) == 0:
         logger.warn('Sentry DSN not set.')
+    elif skip_sentry:
+        logger.info('Skipping Sentry Initialization for Celery.')
     else:
-        sentry_sdk.init(c.SENTRY_DSN, integrations=[FlaskIntegration()])
+        sentry_sdk.init(c.SENTRY_DSN, integrations=[FlaskIntegration(), RedisIntegration(), SqlalchemyIntegration()])
     # add more external integrations below

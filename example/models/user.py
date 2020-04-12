@@ -1,5 +1,3 @@
-from marshmallow_sqlalchemy import ModelSchema
-
 from extensions import db
 
 
@@ -12,8 +10,3 @@ class User(db.Model):
     name = db.Column(db.String, nullable=False)
 
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-
-
-class UserSchema(ModelSchema):
-    class Meta:
-        model = User

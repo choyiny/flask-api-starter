@@ -4,18 +4,22 @@ Example REST endpoints for a model User.
 These endpoints can be reached at /example/users/.
 """
 from flask import request
-from flask_restful import Resource
+from flask_apispec import marshal_with, use_kwargs
 from marshmallow import ValidationError
 
-from example.models import User, UserSchema
+from example.controllers.example_base_controller import ExampleBaseController
+from example.models import User
+from example.models.schemas import UserSchema
 from extensions import db
 
 
-class UsersCollectionController(Resource):
+class UsersCollectionController(ExampleBaseController):
     """
     /users/
     """
-    def post(self):
+    @marshal_with(UserSchema)
+    @use_kwargs(UserSchema)
+    def post(self, **_):
         """
         Create a new User.
         """
@@ -32,20 +36,21 @@ class UsersCollectionController(Resource):
 
         return UserSchema().dump(user)
 
+    @marshal_with(UserSchema(many=True))
     def get(self):
         """
         Return a paginated list of users.
         """
         users = User.query.all()
-        return {
-            'data': UserSchema(many=True).dump(users)
-        }
+        return UserSchema(many=True).dump(users)
 
 
-class UsersController(Resource):
+class UsersController(ExampleBaseController):
     """
     /users/<string:user_id>
     """
+
+    @marshal_with(UserSchema)
     def get(self, user_id):
         """
         Return User that matches user_id.
@@ -56,7 +61,9 @@ class UsersController(Resource):
 
         return UserSchema().dump(user)
 
-    def put(self, user_id):
+    @marshal_with(UserSchema)
+    @use_kwargs(UserSchema)
+    def put(self, **kwargs):
         """
         Replace attributes for User that matches user_id.
         """
@@ -69,7 +76,7 @@ class UsersController(Resource):
             return e, 422
 
         # modify the user id
-        user.user_id = user_id
+        user.user_id = kwargs.get('user_id')
 
         db.session.add(user)
         db.session.commit()

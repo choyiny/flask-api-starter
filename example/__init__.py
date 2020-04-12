@@ -1,3 +1,4 @@
 from flask import Blueprint
 
-example_bp = Blueprint('example', __name__, url_prefix='/example')
+bp_name = 'example'
+example_bp = Blueprint(bp_name, __name__, url_prefix='/example')

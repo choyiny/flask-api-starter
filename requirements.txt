@@ -14,9 +14,15 @@ Flask-Migrate===2.5.3
 marshmallow===3.3.0
 flask_marshmallow===0.10.1
 marshmallow-sqlalchemy===0.21.0
+flask-apispec===0.8.8
+apispec===3.3.0
 
 # sending external requests
 requests==2.21.0
+
+# worker queues
+celery==4.4.2
+redis===3.4.1
 
 # deployment
 gunicorn==20.0.4

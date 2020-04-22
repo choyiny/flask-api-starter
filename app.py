@@ -36,7 +36,27 @@ def create_app(for_celery=False):
     register_shell(app)
     register_external(skip_sentry=for_celery)
 
+    if for_celery:
+        register_celery(app)
+
     return app
+
+
+def register_celery(app):
+    from celery.signals import task_postrun
+
+    # Celery db sessions
+    # https://bl.ocks.org/twolfson/a1b329e9353f9b575131
+    def handle_celery_postrun(retval=None, *args, **kwargs):
+        """After each Celery task, teardown our db session"""
+        if app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']:
+            if not isinstance(retval, Exception):
+                db.session.commit()
+        # If we aren't in an eager request (i.e. Flask will perform teardown), then teardown
+        if not app.config['CELERY_ALWAYS_EAGER']:
+            db.session.remove()
+
+    task_postrun.connect(handle_celery_postrun)
 
 
 def register_shell(app: Flask):

@@ -3,34 +3,29 @@ Example REST endpoints for a model User.
 
 These endpoints can be reached at /example/users/.
 """
-from flask import request
-from flask_apispec import marshal_with, use_kwargs
-from marshmallow import ValidationError
+from flask_apispec import marshal_with, use_kwargs, doc
 
 from example.controllers.example_base_controller import ExampleBaseController
 from example.models import User
 from example.models.schemas import UserSchema
 from extensions import db
+from helpers import ErrorResponseSchema
 
 
+@doc(
+    description="""User collection related operations""",
+)
 class UsersCollectionController(ExampleBaseController):
     """
     /users/
     """
     @marshal_with(UserSchema)
     @use_kwargs(UserSchema)
-    def post(self, **_):
+    def post(self, **user_info):
         """
         Create a new User.
         """
-        json = request.get_json(force=True)
-        if not json:
-            return {'success': False}, 400
-        try:
-            user = UserSchema().load(json, session=db.session)
-        except ValidationError as e:
-            return e, 422
-
+        user = User(**user_info)
         db.session.add(user)
         db.session.commit()
 
@@ -45,19 +40,23 @@ class UsersCollectionController(ExampleBaseController):
         return UserSchema(many=True).dump(users)
 
 
+@doc(
+    description="""User element related operations""",
+)
 class UsersController(ExampleBaseController):
     """
     /users/<string:user_id>
     """
 
     @marshal_with(UserSchema)
+    @marshal_with(ErrorResponseSchema, code=404)
     def get(self, user_id):
         """
         Return User that matches user_id.
         """
         user = User.query.filter_by(user_id=user_id).first()
         if user is None:
-            return {'success': False}, 404
+            return {'description': 'User cannot be found.'}, 404
 
         return UserSchema().dump(user)
 
@@ -67,15 +66,8 @@ class UsersController(ExampleBaseController):
         """
         Replace attributes for User that matches user_id.
         """
-        json = request.get_json(force=True)
-        if not json:
-            return {'success': False}, 400
-        try:
-            user = UserSchema().load(json, session=db.session)
-        except ValidationError as e:
-            return e, 422
-
         # modify the user id
+        user = User(**kwargs)
         user.user_id = kwargs.get('user_id')
 
         db.session.add(user)
@@ -83,15 +75,16 @@ class UsersController(ExampleBaseController):
 
         return UserSchema().dump(user)
 
+    @marshal_with(ErrorResponseSchema, code=404)
     def delete(self, user_id):
         """
         Delete User that matches user_id.
         """
         user = User.query.filter_by(user_id=user_id).first()
         if user is None:
-            return {'success': False}, 404
+            return {'description': 'User cannot be found.'}, 404
 
         db.session.delete(user)
         db.session.commit()
 
-        return {'success': True}
+        return {'description': f'User {user_id} deleted.'}

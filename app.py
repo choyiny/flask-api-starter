@@ -29,7 +29,9 @@ def create_app(for_celery=False):
     app.config.from_object(c)
 
     # cors
-    CORS(app, expose_headers=['Authorization'], resources={'/*': {'origins': c.ORIGINS}})
+    CORS(
+        app, expose_headers=["Authorization"], resources={"/*": {"origins": c.ORIGINS}}
+    )
 
     register_extensions(app)
     register_blueprints(app)
@@ -49,11 +51,11 @@ def register_celery(app):
     # https://bl.ocks.org/twolfson/a1b329e9353f9b575131
     def handle_celery_postrun(retval=None, *args, **kwargs):
         """After each Celery task, teardown our db session"""
-        if app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']:
+        if app.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"]:
             if not isinstance(retval, Exception):
                 db.session.commit()
         # If we aren't in an eager request (i.e. Flask will perform teardown), then teardown
-        if not app.config['CELERY_ALWAYS_EAGER']:
+        if not app.config["CELERY_ALWAYS_EAGER"]:
             db.session.remove()
 
     task_postrun.connect(handle_celery_postrun)
@@ -61,20 +63,18 @@ def register_celery(app):
 
 def register_shell(app: Flask):
     """ Expose more attributes to the Flask Shell. """
+
     @app.shell_context_processor
     def make_shell_context():
         # make below variables accessible in the shell for testing purposes
-        return {
-            'app': app,
-            'db': db
-        }
+        return {"app": app, "db": db}
 
 
 def register_extensions(app: Flask):
     """ Register Flask extensions. """
 
     if len(c.SQLALCHEMY_DATABASE_URI) == 0:
-        logger.warn('Database URL not set.')
+        logger.warn("Database URL not set.")
         return
 
     db.init_app(app)
@@ -83,9 +83,7 @@ def register_extensions(app: Flask):
 
 def register_blueprints(app: Flask):
     """ Register Flask blueprints. """
-    app.config.update({
-        'APISPEC_SPEC': APISPEC_SPEC
-    })
+    app.config.update({"APISPEC_SPEC": APISPEC_SPEC})
     docs = FlaskApiSpec(app)
 
     # example blueprint
@@ -99,9 +97,16 @@ def register_external(skip_sentry=False):
     """ Register external integrations. """
     # sentry
     if len(c.SENTRY_DSN) == 0:
-        logger.warn('Sentry DSN not set.')
+        logger.warn("Sentry DSN not set.")
     elif skip_sentry:
-        logger.info('Skipping Sentry Initialization for Celery.')
+        logger.info("Skipping Sentry Initialization for Celery.")
     else:
-        sentry_sdk.init(c.SENTRY_DSN, integrations=[FlaskIntegration(), RedisIntegration(), SqlalchemyIntegration()])
+        sentry_sdk.init(
+            c.SENTRY_DSN,
+            integrations=[
+                FlaskIntegration(),
+                RedisIntegration(),
+                SqlalchemyIntegration(),
+            ],
+        )
     # add more external integrations below

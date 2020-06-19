@@ -5,13 +5,13 @@ logger = getLogger()
 
 
 class ExampleClass:
-  """
+    """
   Example Class
   """
 
-  @staticmethod
-  def praise_jordan_liu():
-    """
+    @staticmethod
+    def praise_jordan_liu():
+        """
     Praises Jordan Liu
     """
-    logger.info("Damn, Jordan Liu. You did a great job.")
+        logger.info("Damn, Jordan Liu. You did a great job.")

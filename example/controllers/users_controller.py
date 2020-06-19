@@ -12,13 +12,12 @@ from extensions import db
 from helpers import ErrorResponseSchema
 
 
-@doc(
-    description="""User collection related operations""",
-)
+@doc(description="""User collection related operations""",)
 class UsersCollectionController(ExampleBaseController):
     """
     /users/
     """
+
     @marshal_with(UserSchema)
     @use_kwargs(UserSchema)
     def post(self, **user_info):
@@ -40,9 +39,7 @@ class UsersCollectionController(ExampleBaseController):
         return UserSchema(many=True).dump(users)
 
 
-@doc(
-    description="""User element related operations""",
-)
+@doc(description="""User element related operations""",)
 class UsersController(ExampleBaseController):
     """
     /users/<string:user_id>
@@ -56,7 +53,7 @@ class UsersController(ExampleBaseController):
         """
         user = User.query.filter_by(user_id=user_id).first()
         if user is None:
-            return {'description': 'User cannot be found.'}, 404
+            return {"description": "User cannot be found."}, 404
 
         return UserSchema().dump(user)
 
@@ -68,7 +65,7 @@ class UsersController(ExampleBaseController):
         """
         # modify the user id
         user = User(**kwargs)
-        user.user_id = kwargs.get('user_id')
+        user.user_id = kwargs.get("user_id")
 
         db.session.add(user)
         db.session.commit()
@@ -82,9 +79,9 @@ class UsersController(ExampleBaseController):
         """
         user = User.query.filter_by(user_id=user_id).first()
         if user is None:
-            return {'description': 'User cannot be found.'}, 404
+            return {"description": "User cannot be found."}, 404
 
         db.session.delete(user)
         db.session.commit()
 
-        return {'description': f'User {user_id} deleted.'}
+        return {"description": f"User {user_id} deleted."}

@@ -2,7 +2,7 @@ from extensions import db
 
 
 class User(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     # id
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)

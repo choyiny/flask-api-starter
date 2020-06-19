@@ -3,7 +3,6 @@ from example.workers.example import example_task
 
 
 class PraiseController(ExampleBaseController):
-
     def get(self):
-        example_task.delay('Damn, Jordan Liu. You did a great job.')
-        return {'data': 'Worker queued.'}
+        example_task.delay("Damn, Jordan Liu. You did a great job.")
+        return {"data": "Worker queued."}

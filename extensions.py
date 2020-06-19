@@ -7,15 +7,18 @@ from flask_sqlalchemy import SQLAlchemy
 import config
 
 # logging
-logger = logging.getLogger('flask.general')
+logger = logging.getLogger("flask.general")
 
 
 # database
 db = SQLAlchemy()
 
 # celery
-celery_tasks = [
-    'example.workers.example'
-]
+celery_tasks = ["example.workers.example"]
 
-celery = Celery('app', broker=config.CELERY_BROKER_URL, backend=config.CELERY_RESULT_BACKEND, include=celery_tasks)
+celery = Celery(
+    "app",
+    broker=config.CELERY_BROKER_URL,
+    backend=config.CELERY_RESULT_BACKEND,
+    include=celery_tasks,
+)

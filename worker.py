@@ -14,8 +14,12 @@ app.app_context().push()
 
 # add more external integrations below
 if c.CELERY_SENTRY_DSN:
-    sentry_sdk.init(c.CELERY_SENTRY_DSN, integrations=[CeleryIntegration(),
-                                                       FlaskIntegration(),
-                                                       RedisIntegration(),
-                                                       SqlalchemyIntegration()
-                                                       ])
+    sentry_sdk.init(
+        c.CELERY_SENTRY_DSN,
+        integrations=[
+            CeleryIntegration(),
+            FlaskIntegration(),
+            RedisIntegration(),
+            SqlalchemyIntegration(),
+        ],
+    )

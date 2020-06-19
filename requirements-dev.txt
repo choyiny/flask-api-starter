@@ -1,0 +1,5 @@
+# Pre-commit hooks
+pre-commit~=2.4.0
+
+# Code styling
+black~=19.10b0

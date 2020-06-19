@@ -38,12 +38,14 @@ Note: This project *requires* Python 3.7+ installed. For Mac users, ensure you a
     ```
     (flask-starter-venv) $ cd flask-api-starter
     (flask-starter-venv) $ pip install -r requirements.txt
+    (flask-starter-venv) $ pip install -r requirements-dev.txt
+    (flask-starter-venv) $ pre-commit install
     ```
 
 5. Edit `config.py.bak` with the proper credentials and move it to `config.py`.
 6. Run Migrations
     ```
-    (flask-starter-venv) $ PYTHONPATH=. alembic upgrade head
+    (flask-starter-venv) $ flask db upgrade
     ```
     
 ### Run Locally

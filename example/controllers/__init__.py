@@ -1,3 +1,0 @@
-from .index_controller import ExampleIndexController
-from .users_controller import UsersCollectionController, UsersController
-from .praise_controller import PraiseController

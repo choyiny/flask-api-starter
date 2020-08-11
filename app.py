@@ -1,22 +1,17 @@
 import os
 
 import sentry_sdk
+from flask import Flask, jsonify
 from flask_apispec import FlaskApiSpec
+from flask_cors import CORS
 from flask_migrate import Migrate
 from sentry_sdk.integrations.flask import FlaskIntegration
-
-from flask import Flask
-from flask_cors import CORS
-from flask_restful import Api
 from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 import config as c
-
-from example import example_bp
-from example import routes as example_routes
-
 from extensions import db, logger
+from helpers import add_blueprint
 from spec import APISPEC_SPEC
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,27 +33,21 @@ def create_app(for_celery=False):
     register_shell(app)
     register_external(skip_sentry=for_celery)
 
-    if for_celery:
-        register_celery(app)
+    # Return validation errors as JSON
+    @app.errorhandler(422)
+    def handle_error(err):
+        headers = err.data.get("headers", None)
+        messages = err.data.get("messages", ["Invalid request."])
+        if headers:
+            return jsonify({"errors": messages}), err.code, headers
+        else:
+            return jsonify({"errors": messages}), err.code
+
+    @app.errorhandler(404)
+    def handle_404(err):
+        return jsonify({"description": "Not Found"}), err.code
 
     return app
-
-
-def register_celery(app):
-    from celery.signals import task_postrun
-
-    # Celery db sessions
-    # https://bl.ocks.org/twolfson/a1b329e9353f9b575131
-    def handle_celery_postrun(retval=None, *args, **kwargs):
-        """After each Celery task, teardown our db session"""
-        if app.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"]:
-            if not isinstance(retval, Exception):
-                db.session.commit()
-        # If we aren't in an eager request (i.e. Flask will perform teardown), then teardown
-        if not app.config["CELERY_ALWAYS_EAGER"]:
-            db.session.remove()
-
-    task_postrun.connect(handle_celery_postrun)
 
 
 def register_shell(app: Flask):
@@ -78,7 +67,7 @@ def register_extensions(app: Flask):
         return
 
     db.init_app(app)
-    migrate = Migrate(app, db)
+    migrate = Migrate(app, db, directory="db/migrations")
 
 
 def register_blueprints(app: Flask):
@@ -87,9 +76,11 @@ def register_blueprints(app: Flask):
     docs = FlaskApiSpec(app)
 
     # example blueprint
-    example_api = Api(example_bp)
-    app.register_blueprint(example_bp)
-    example_routes.set_routes(example_api, docs)
+    from blueprints.example import example_bp
+    from blueprints.example import routes as example_routes
+
+    add_blueprint(app, docs, example_bp, example_routes)
+
     # add more blueprints below
 
 

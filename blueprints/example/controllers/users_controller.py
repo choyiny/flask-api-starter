@@ -4,21 +4,18 @@ Example REST endpoints for a model User.
 These endpoints can be reached at /example/users/.
 """
 from flask_apispec import marshal_with, use_kwargs, doc
+from marshmallow import Schema, fields
 
-from example.controllers.example_base_controller import ExampleBaseController
-from example.models import User
-from example.models.schemas import UserSchema
+from blueprints.example.controllers import ExampleBaseController
+from blueprints.example.models import User
+from blueprints.example.schemas import UserSchema, PostUserSchema
 from extensions import db
 from helpers import ErrorResponseSchema
 
 
 @doc(description="""User collection related operations""",)
 class UsersCollectionController(ExampleBaseController):
-    """
-    /users/
-    """
-
-    @marshal_with(UserSchema)
+    @marshal_with(PostUserSchema)
     @use_kwargs(UserSchema)
     def post(self, **user_info):
         """
@@ -28,25 +25,23 @@ class UsersCollectionController(ExampleBaseController):
         db.session.add(user)
         db.session.commit()
 
-        return UserSchema().dump(user)
+        return user
 
-    @marshal_with(UserSchema(many=True))
+    class UserIndexSchema(Schema):
+        users = fields.List(fields.Nested(UserSchema))
+
+    @marshal_with(UserIndexSchema)
     def get(self):
         """
         Return a paginated list of users.
         """
         users = User.query.all()
-        return UserSchema(many=True).dump(users)
+        return {"users": users}
 
 
 @doc(description="""User element related operations""",)
 class UsersController(ExampleBaseController):
-    """
-    /users/<string:user_id>
-    """
-
     @marshal_with(UserSchema)
-    @marshal_with(ErrorResponseSchema, code=404)
     def get(self, user_id):
         """
         Return User that matches user_id.
@@ -57,7 +52,7 @@ class UsersController(ExampleBaseController):
 
         return UserSchema().dump(user)
 
-    @marshal_with(UserSchema)
+    @marshal_with(PostUserSchema)
     @use_kwargs(UserSchema)
     def put(self, **kwargs):
         """

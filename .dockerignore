@@ -1,1 +1,11 @@
 .github
+.gitignore
+.git
+
+LICENSE
+
+pyproject.toml
+requirements-dev.txt
+.pre-commit-config.yaml
+
+config.py.bak

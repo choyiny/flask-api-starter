@@ -2,16 +2,11 @@
 import logging
 
 from celery import Celery
-from flask_sqlalchemy import SQLAlchemy
 
 import config
 
 # logging
 logger = logging.getLogger("flask.general")
-
-
-# database
-db = SQLAlchemy()
 
 # celery
 celery = Celery(

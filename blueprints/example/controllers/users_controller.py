@@ -6,24 +6,21 @@ These endpoints can be reached at /example/users/.
 from flask_apispec import marshal_with, use_kwargs, doc
 from marshmallow import Schema, fields
 
-from blueprints.example.controllers import ExampleBaseController
+from blueprints.example.controllers import ExampleBaseResource
 from blueprints.example.models import User
 from blueprints.example.schemas import UserSchema, PostUserSchema
-from extensions import db
 from helpers import ErrorResponseSchema
 
 
 @doc(description="""User collection related operations""",)
-class UsersCollectionController(ExampleBaseController):
+class UsersResource(ExampleBaseResource):
     @marshal_with(PostUserSchema)
     @use_kwargs(UserSchema)
     def post(self, **user_info):
         """
         Create a new User.
         """
-        user = User(**user_info)
-        db.session.add(user)
-        db.session.commit()
+        user = User(**user_info).save()
 
         return user
 
@@ -35,48 +32,43 @@ class UsersCollectionController(ExampleBaseController):
         """
         Return a paginated list of users.
         """
-        users = User.query.all()
+        users = User.objects.all()
         return {"users": users}
 
 
 @doc(description="""User element related operations""",)
-class UsersController(ExampleBaseController):
+class UserResource(ExampleBaseResource):
     @marshal_with(UserSchema)
     def get(self, user_id):
         """
         Return User that matches user_id.
         """
-        user = User.query.filter_by(user_id=user_id).first()
+        user = User.objects(id=user_id).first()
         if user is None:
-            return {"description": "User cannot be found."}, 404
+            return {"description": "User not found."}, 404
 
-        return UserSchema().dump(user)
+        return user
 
     @marshal_with(PostUserSchema)
     @use_kwargs(UserSchema)
-    def put(self, **kwargs):
+    def patch(self, **kwargs):
         """
         Replace attributes for User that matches user_id.
         """
         # modify the user id
         user = User(**kwargs)
-        user.user_id = kwargs.get("user_id")
+        user.name = kwargs.get("name")
+        user.save()
 
-        db.session.add(user)
-        db.session.commit()
-
-        return UserSchema().dump(user)
+        return user
 
     @marshal_with(ErrorResponseSchema, code=404)
     def delete(self, user_id):
         """
         Delete User that matches user_id.
         """
-        user = User.query.filter_by(user_id=user_id).first()
+        user = User.objects(id=user_id).first()
         if user is None:
-            return {"description": "User cannot be found."}, 404
+            return {"description": "User not found."}, 404
 
-        db.session.delete(user)
-        db.session.commit()
-
-        return {"description": f"User {user_id} deleted."}
+        return user

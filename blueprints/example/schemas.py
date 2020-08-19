@@ -7,4 +7,4 @@ class PostUserSchema(Schema):
 
 
 class UserSchema(PostUserSchema):
-    user_id = fields.Int()
+    id = fields.Str()

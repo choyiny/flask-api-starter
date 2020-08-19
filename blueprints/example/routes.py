@@ -2,7 +2,7 @@ from flask import Blueprint, Flask
 from flask_apispec import FlaskApiSpec
 
 from blueprints.example import bp_name
-from blueprints.example.controllers import (
+from .controllers import (
     UsersResource,
     UserResource,
 )

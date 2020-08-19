@@ -6,10 +6,11 @@ These endpoints can be reached at /example/users/.
 from flask_apispec import marshal_with, use_kwargs, doc
 from marshmallow import Schema, fields
 
-from blueprints.example.controllers import ExampleBaseResource
-from blueprints.example.models import User
-from blueprints.example.schemas import UserSchema, PostUserSchema
 from helpers import ErrorResponseSchema
+
+from .example_base_resource import ExampleBaseResource
+from ..models import User
+from ..schemas import UserSchema, PostUserSchema
 
 
 @doc(description="""User collection related operations""",)

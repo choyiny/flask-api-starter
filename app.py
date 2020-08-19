@@ -16,18 +16,19 @@ from spec import APISPEC_SPEC
 project_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def create_app(for_celery=False):
+def create_app(for_celery=False, testing=False):
     """ Application Factory. """
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(c)
+    app.config["TESTING"] = testing
 
     # cors
     CORS(
         app, expose_headers=["Authorization"], resources={"/*": {"origins": c.ORIGINS}}
     )
 
-    register_extensions()
+    register_extensions(testing)
     register_blueprints(app)
     register_shell(app)
     register_external(skip_sentry=for_celery)
@@ -58,10 +59,11 @@ def register_shell(app: Flask):
         return {"app": app}
 
 
-def register_extensions():
+def register_extensions(testing: bool):
     """ Register Flask extensions. """
 
-    mongoengine.connect(host=c.MONGODB_URL)
+    url = c.MONGODB_URL if not testing else c.TEST_MONGODB_URL
+    mongoengine.connect(host=url)
 
 
 def register_blueprints(app: Flask):
@@ -80,7 +82,7 @@ def register_external(skip_sentry=False):
     """ Register external integrations. """
     # sentry
     if len(c.SENTRY_DSN) == 0:
-        logger.warn("Sentry DSN not set.")
+        logger.warning("Sentry DSN not set.")
     elif skip_sentry:
         logger.info("Skipping Sentry Initialization for Celery.")
     else:

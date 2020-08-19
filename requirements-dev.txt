@@ -3,3 +3,8 @@ pre-commit~=2.4.0
 
 # Code styling
 black~=19.10b0
+pytest==6.0.1
+flake8==3.8.3
+
+# mock
+mongomock==3.20.0

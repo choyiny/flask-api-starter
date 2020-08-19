@@ -4,10 +4,9 @@
 SECRET_KEY = "replace_this"
 ORIGINS = ['*']
 
-# SQLAlchemy
-SQLALCHEMY_ECHO = False  # do not show SQL statements
-SQLALCHEMY_TRACK_MODIFICATIONS = False  # suppress warnings
-SQLALCHEMY_DATABASE_URI = "postgresql://postgres@localhost/example"
+# MongoDB
+MONGODB_URL = "mongodb://example:password@localhost:27018/starter"
+TEST_MONGODB_URL = "mongomock://localhost/test"
 
 # CORS
 FRONTEND_URL = "http://localhost:4200"

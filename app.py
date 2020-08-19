@@ -10,6 +10,7 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 import config as c
+import loggers
 from extensions import logger
 from spec import APISPEC_SPEC
 
@@ -27,6 +28,8 @@ def create_app(for_celery=False, testing=False):
     CORS(
         app, expose_headers=["Authorization"], resources={"/*": {"origins": c.ORIGINS}}
     )
+
+    app.before_request(loggers.before_request)
 
     register_extensions(testing)
     register_blueprints(app)

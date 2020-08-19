@@ -1,21 +1,24 @@
+from flask import Blueprint, Flask
 from flask_apispec import FlaskApiSpec
-from flask_restful import Api
 
 from blueprints.example import bp_name
-from blueprints.example.controllers import (
-    UsersCollectionController,
-    UsersController,
+from .controllers import (
+    UsersResource,
+    UserResource,
 )
 
 
-def set_routes(api: Api, docs: FlaskApiSpec):
-    """ Setup the routes required for this blueprint. """
-
-    resource_to_route = [
-        (UsersCollectionController, "/users/"),
-        (UsersController, "/users/<string:user_id>"),
+def set_routes(app: Flask, bp: Blueprint, docs: FlaskApiSpec):
+    # a list of resources
+    resources = [
+        (UsersResource, "/users/", "users", ["GET", "POST"]),
+        (UserResource, "/users/<string:user_id>", "user", ["GET", "PATCH", "DELETE"]),
     ]
 
-    for controller, route in resource_to_route:
-        api.add_resource(controller, route)
-        docs.register(controller, blueprint=bp_name)
+    for resource, route, name, methods in resources:
+        bp.add_url_rule(route, view_func=resource.as_view(name), methods=methods)
+
+    app.register_blueprint(bp)
+
+    for resource, route, name, methods in resources:
+        docs.register(resource, blueprint=bp_name, endpoint=name)

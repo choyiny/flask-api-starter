@@ -1,2 +1,1 @@
-from .example_base_controller import ExampleBaseController
-from .users_controller import UsersCollectionController, UsersController
+from .users_resources import UserResource, UsersResource

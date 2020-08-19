@@ -1,12 +1,8 @@
-from extensions import db
+from mongoengine import Document, StringField, BooleanField
 
 
-class User(db.Model):
-    __tablename__ = "users"
+class User(Document):
 
-    # id
-    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name = StringField(required=True)
 
-    name = db.Column(db.String, nullable=False)
-
-    is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    is_admin = BooleanField(default=False)

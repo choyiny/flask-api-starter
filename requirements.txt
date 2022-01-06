@@ -16,7 +16,7 @@ apispec===3.3.0
 requests==2.21.0
 
 # worker queues
-celery==4.4.2
+celery==5.2.2
 redis===3.4.1
 
 # deployment
